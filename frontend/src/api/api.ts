@@ -1,4 +1,4 @@
-const API_URL = "http://localhost:3000"; // ← Plus de /v1 ici
+const API_URL = "http://localhost:3000";
 
 // Token interne géré par le front
 let token: string | null = null;
