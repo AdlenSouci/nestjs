@@ -10,9 +10,9 @@ import { PrismaModule } from 'src/prisma.module';
   imports: [
     PassportModule,
     JwtModule.register({
-      secret: 'SECRET_KEY',
+      secret: process.env.JWT_SECRET,
       signOptions: { expiresIn: '1h' },
-    }), 
+    }),
     PrismaModule,
 
   ],
@@ -20,4 +20,4 @@ import { PrismaModule } from 'src/prisma.module';
   controllers: [AuthController],
   exports: [AuthService],
 })
-export class AuthModule {}
+export class AuthModule { }

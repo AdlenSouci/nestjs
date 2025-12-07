@@ -24,7 +24,7 @@ export default function Login({ onLogin }: { onLogin: (token: string) => void })
   return (
     <div className="flex items-center justify-center h-screen bg-green-50">
       <form className="bg-white p-8 rounded shadow-md w-96" onSubmit={handleSubmit}>
-        <h1 className="text-2xl font-bold mb-4">Admin Login</h1>
+        <h1 className="text-2xl font-bold mb-4">Login</h1>
         <input
           className="border p-2 w-full mb-2"
           placeholder="Email"

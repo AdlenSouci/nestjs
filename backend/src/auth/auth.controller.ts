@@ -1,4 +1,5 @@
-import { Controller, Post, Body, UnauthorizedException } from '@nestjs/common';
+// auth.controller.ts
+import { Controller, Post, Body } from '@nestjs/common';
 import { AuthService } from './auth.service';
 
 @Controller('auth')
@@ -7,9 +8,10 @@ export class AuthController {
 
   @Post('login')
   async login(@Body() body: { email: string; password: string }) {
-    const user = await this.authService.validateAdmin(body.email, body.password);
+    // utiliser la nouvelle méthode
+    const user = await this.authService.validateUser(body.email, body.password);
     if (!user) {
-      throw new UnauthorizedException('Invalid credentials');
+      return { message: 'Invalid credentials' };
     }
     return this.authService.login(user);
   }
