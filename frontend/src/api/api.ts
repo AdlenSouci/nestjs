@@ -1,4 +1,5 @@
-const API_URL = "http://localhost:3000";
+//const API_URL = "http://localhost:3000";
+export const API_URL = "https://book-app-4vgb.onrender.com";
 
 // Token interne géré par le front
 let token: string | null = null;
