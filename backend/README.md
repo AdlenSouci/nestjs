@@ -1,98 +1,139 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+````markdown
+# 📚 Projet - Maîtrise d’une API REST (Bibliothèque Numérique)
 
-## Description
+Ce projet a été réalisé dans le cadre du module "Maîtrise d’une API REST". Il s'agit d'une solution complète (**Backend NestJS** + **Frontend React**) permettant de gérer une bibliothèque numérique (Livres, Auteurs, Catégories).
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+---
 
-## Project setup
+## 🚀 Fonctionnalités
+
+Le projet respecte les contraintes techniques imposées et propose :
+
+* **CRUD Complet** : Gestion des Livres, Auteurs et Catégories.
+* **Frontend Interactif** : Interface utilisateur complète avec formulaires et gestion de **Connexion / Déconnexion**.
+* **Authentification & Rôles** :
+    * Authentification par **JWT** (Bearer Token) avec session persistante.
+    * Gestion des rôles : **Admin** (Accès total : Création/Suppression) vs **User** (Lecture seule).
+* **Sécurité** :
+    * **Rate Limiting** : Protection contre le spam via `@nestjs/throttler` (10 requêtes/min).
+    * **Bcrypt** : Hashage sécurisé des mots de passe.
+    * **Guards** : Protection des routes sensibles.
+* **Documentation API** : Interface **Swagger UI** intégrée.
+* **Base de Données** : PostgreSQL hébergée dans le cloud (Vercel/Neon).
+
+---
+
+## 🛠️ Prérequis
+
+* **Node.js** (v18 ou supérieur)
+* **npm**
+
+---
+
+## ⚙️ Installation & Configuration
+
+Suivez ces étapes scrupuleusement pour lancer le projet.
+
+### 1. Installation des dépendances
+
+Ouvrez un terminal à la racine du projet et installez les dépendances pour les deux parties :
+
+**Backend :**
+```bash
+cd backend
+npm install
+````
+
+**Frontend :**
 
 ```bash
-$ npm install
+cd ../frontend
+npm install
 ```
 
-## Compile and run the project
+### 2\. Configuration de l'environnement (.env)
+
+Le projet utilise une base de données PostgreSQL hébergée. Pour des raisons de sécurité, le fichier `.env` n'est pas inclus. **Vous devez le créer manuellement.**
+
+1.  Allez dans le dossier `backend`.
+2.  Créez un fichier nommé `.env`.
+3.  Copiez le contenu exact ci-dessous (il contient les accès à la base de données de production dédiée à l'évaluation) :
+
+<!-- end list -->
+
+```env
+# --- Base de Données (Neon/Vercel) ---
+POSTGRES_PRISMA_URL="postgresql://neondb_owner:npg_7LQCMRvEnXH4@ep-calm-morning-ab5v3cna-pooler.eu-west-2.aws.neon.tech/neondb?connect_timeout=15&sslmode=require"
+POSTGRES_URL_NON_POOLING="postgresql://neondb_owner:npg_7LQCMRvEnXH4@ep-calm-morning-ab5v3cna.eu-west-2.aws.neon.tech/neondb?sslmode=require"
+DATABASE_URL="postgresql://neondb_owner:npg_7LQCMRvEnXH4@ep-calm-morning-ab5v3cna-pooler.eu-west-2.aws.neon.tech/neondb?connect_timeout=15&sslmode=require"
+
+# --- Sécurité ---
+# Définissez votre propre phrase secrète ici pour la signature des tokens
+JWT_SECRET="UnePhraseSecreteTresLongueEtSecuriseePourLeProjet"
+```
+
+### 3\. Initialisation de la Base de Données
+
+Une fois le fichier `.env` créé, lancez les commandes suivantes dans le dossier `backend` pour créer les tables et injecter les données :
 
 ```bash
-# development
-$ npm run start
+# 1. Génère le client Prisma
+npx prisma generate
 
-# watch mode
-$ npm run start:dev
+# 2. Synchronise le schéma (Crée les tables dans la BDD)
+npx prisma db push
 
-# production mode
-$ npm run start:prod
+# 3. Remplit la base avec les utilisateurs de test
+npx prisma db seed
 ```
 
-## Run tests
+> **Note :** Le script `seed.ts` va créer les comptes **Admin** et **User** nécessaires pour tester l'application.
+
+-----
+
+## ▶️ Démarrage
+
+Il faut lancer deux terminaux séparés.
+
+**Terminal 1 (Backend) :**
 
 ```bash
-# unit tests
-$ npm run test
-
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
+cd backend
+npm run start:dev
 ```
 
-## Deployment
+> API : `http://localhost:3000`
 
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
-
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
+**Terminal 2 (Frontend) :**
 
 ```bash
-$ npm install -g @nestjs/mau
-$ mau deploy
+cd frontend
+npm run dev
 ```
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
+> Site Web : `http://localhost:5173`
 
-## Resources
+-----
 
-Check out a few resources that may come in handy when working with NestJS:
+## 🧪 Comptes de Test
 
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
+Utilisez ces identifiants (générés par le seed) pour tester l'application :
 
-## Support
+| Rôle | Email | Mot de passe | Permissions |
+| :--- | :--- | :--- | :--- |
+| **Admin** | `admin@example.com` | `admin123` | Créer, Modifier, Supprimer |
+| **User** | `user@example.com` | `user123` | Lecture seule |
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+-----
 
-## Stay in touch
+## 📖 Documentation & Accès
 
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+  * **Application Web** : [http://localhost:5173](https://www.google.com/search?q=http://localhost:5173)
+  * **Documentation Swagger** : [http://localhost:3000/api](https://www.google.com/search?q=http://localhost:3000/api)
 
-## License
+<!-- end list -->
 
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+```
+```
