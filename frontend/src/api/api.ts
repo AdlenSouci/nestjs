@@ -1,5 +1,9 @@
-//const API_URL = "http://localhost:3000";
-export const API_URL = "https://book-app-4vgb.onrender.com";
+// Détection automatique : Vrai si on est en local, Faux si on est sur Vercel
+const isDev = import.meta.env.MODE === 'development';
+
+export const API_URL = isDev
+  ? "http://localhost:3000"                   // URL Local (Prof)
+  : "https://book-app-4vgb.onrender.com";     // URL Production (Render)
 
 // Token interne géré par le front
 let token: string | null = null;

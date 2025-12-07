@@ -6,8 +6,12 @@ import { ValidationPipe } from '@nestjs/common';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
+  // --- CONFIGURATION CORS HYBRIDE ---
   app.enableCors({
-    origin: true,
+    origin: [
+      'http://localhost:5173',                // 1. Pour le test local (Prof)
+      'https://nestjs-opal-zeta.vercel.app',  // 2. Pour le site en ligne (Vercel)
+    ],
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
     credentials: true,
   });
@@ -24,15 +28,15 @@ async function bootstrap() {
   const config = new DocumentBuilder()
     .setTitle('Library API')
     .setDescription('API pour gérer Books, Authors et Categories')
-    .setVersion('v1')  // ← visible uniquement dans Swagger
+    .setVersion('v1')
     .addBearerAuth()
     .build();
 
   const document = SwaggerModule.createDocument(app, config);
 
-  // ---- Versionning uniquement pour Swagger ----
+  // ---- Versionning uniquement pour Swagger (Visuel) ----
   Object.keys(document.paths).forEach((path) => {
-    const newPath = `/v1${path}`; // préfixe /v1
+    const newPath = `/v1${path}`;
     document.paths[newPath] = document.paths[path];
     delete document.paths[path];
   });
