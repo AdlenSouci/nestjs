@@ -6,18 +6,11 @@ import { ValidationPipe } from '@nestjs/common';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
-  // 1. AJOUTE CETTE LIGNE OBLIGATOIREMENT
-  // C'est elle qui crée vraiment les routes /v1/...
   app.setGlobalPrefix('v1'); 
 
-  // --- CONFIGURATION CORS ---
   app.enableCors({
-    origin: [
-      'http://localhost:5173',
-      'http://127.0.0.1:5173', // Ajoute ça pour Playwright par sécurité
-      'https://nestjs-opal-zeta.vercel.app',
-    ],
-    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+    origin: true,
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
     credentials: true,
   });
 
@@ -29,7 +22,6 @@ async function bootstrap() {
     }),
   );
 
-  // ---- Swagger config ----
   const config = new DocumentBuilder()
     .setTitle('Library API')
     .setDescription('API Library')
@@ -38,12 +30,8 @@ async function bootstrap() {
     .build();
 
   const document = SwaggerModule.createDocument(app, config);
-
-  // 2. SUPPRIME TON BLOC "Versionning uniquement pour Swagger"
-  // (Le app.setGlobalPrefix('v1') plus haut s'occupe de tout, même de Swagger)
-
   SwaggerModule.setup('api', app, document);
 
-  await app.listen(process.env.PORT ?? 3000);
+  await app.listen(process.env.PORT || 3000, '0.0.0.0');
 }
 bootstrap();
