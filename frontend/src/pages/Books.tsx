@@ -6,25 +6,46 @@ export default function Books() {
   const [authors, setAuthors] = useState<any[]>([]);
   const [categories, setCategories] = useState<any[]>([]);
 
-  const [title, setTitle] = useState("");
+  // Initialize from localStorage or empty
+  const [title, setTitle] = useState(() => {
+    const saved = localStorage.getItem("draft_book_title");
+    console.log("Books: Initializing state. Storage has:", saved);
+    return saved || "";
+  });
   const [description, setDescription] = useState("");
   const [authorId, setAuthorId] = useState("");
   const [categoryId, setCategoryId] = useState("");
 
   const fetchData = async () => {
-    const [bData, aData, cData] = await Promise.all([
-      api.getBooks(),
-      api.getAuthors(),
-      api.getCategories()
-    ]);
-    setBooks(bData);
-    setAuthors(aData);
-    setCategories(cData);
+    try {
+      const [bData, aData, cData] = await Promise.all([
+        api.getBooks(),
+        api.getAuthors(),
+        api.getCategories()
+      ]);
+      setBooks(bData);
+      setAuthors(aData);
+      setCategories(cData);
+    } catch (err) {
+      console.error("Failed to load data", err);
+    }
   };
 
   useEffect(() => {
     fetchData();
+    // Force re-read just in case
+    const saved = localStorage.getItem("draft_book_title");
+    console.log("Books: Mounted. Storage check:", saved);
+    if (saved && saved !== title) {
+      setTitle(saved);
+    }
   }, []);
+
+  const handleTitleChange = (val: string) => {
+    console.log("Books: Setting title to", val);
+    setTitle(val);
+    localStorage.setItem("draft_book_title", val);
+  };
 
   const handleCreate = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -34,17 +55,22 @@ export default function Books() {
     }
 
     try {
-      await api.createBook({
+      const payload = {
         title,
-        description,
-        authorId: Number(authorId), // Convertit la string du select en nombre
-        categoryId: Number(categoryId), // Convertit la string du select en nombre
-        publishedDate: new Date(), // Envoie une date (qui sera convertie en string JSON)
+        description: description || "Description par défaut",
+        authorId: parseInt(authorId, 10),
+        categoryId: parseInt(categoryId, 10),
+        publishedDate: new Date().toISOString(), // Ensure string format
         available: true,
-      });
-      setTitle("");
+      };
+
+      console.log("Creating book:", payload);
+      await api.createBook(payload);
+
+      // Clear draft on success
+      handleTitleChange("");
       setDescription("");
-      fetchData();
+      await fetchData();
     } catch (err) {
       console.error(err);
       alert("Erreur lors de la création (Vérifie la console F12 > Network)");
@@ -58,7 +84,7 @@ export default function Books() {
       <form onSubmit={handleCreate} className="mb-6 p-4 border rounded bg-gray-50 grid gap-3">
         <input
           value={title}
-          onChange={(e) => setTitle(e.target.value)}
+          onChange={(e) => handleTitleChange(e.target.value)}
           placeholder="Titre du livre"
           className="border p-2 rounded"
           required

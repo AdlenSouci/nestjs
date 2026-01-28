@@ -25,7 +25,7 @@ export default function Authors() {
     try {
       await api.createAuthor({
         name,
-        biography,
+        biography: biography || "Biographie par défaut",
         birthDate: birthDate ? new Date(birthDate) : undefined,
       });
       setName("");
@@ -38,12 +38,14 @@ export default function Authors() {
   };
 
   const handleDelete = async (id: number) => {
-    if(!confirm("Supprimer cet auteur ?")) return;
+    if (!confirm("Supprimer cet auteur ?")) return;
     try {
       await api.deleteAuthor(id);
       fetchAuthors();
-    } catch (err) {
-      alert("Impossible de supprimer");
+    } catch (err: any) {
+      console.error("Erreur suppression:", err);
+      const errorMsg = err?.response?.data?.message || err?.message || "Erreur inconnue";
+      alert(`Impossible de supprimer cet auteur.\n\nRaison: ${errorMsg}\n\nAssurez-vous qu'aucun livre n'est associé à cet auteur.`);
     }
   };
 

@@ -30,12 +30,14 @@ export default function Categories() {
   };
 
   const handleDelete = async (id: number) => {
-    if(!confirm("Supprimer cette catégorie ?")) return;
+    if (!confirm("Supprimer cette catégorie ?")) return;
     try {
       await api.deleteCategory(id);
       fetchCategories();
-    } catch (err) {
-      alert("Impossible de supprimer");
+    } catch (err: any) {
+      console.error("Erreur suppression:", err);
+      const errorMsg = err?.response?.data?.message || err?.message || "Erreur inconnue";
+      alert(`Impossible de supprimer cette catégorie.\n\nRaison: ${errorMsg}\n\nAssurez-vous qu'aucun livre n'est associé à cette catégorie.`);
     }
   };
 

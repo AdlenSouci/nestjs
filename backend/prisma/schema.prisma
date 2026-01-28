@@ -21,8 +21,8 @@ model Book {
   available      Boolean
 
   // Relations
-  author   Author   @relation(fields: [authorId], references: [id])
-  category Category @relation(fields: [categoryId], references: [id])
+  author   Author   @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  category Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
 }
 
 model Author {

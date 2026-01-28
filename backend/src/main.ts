@@ -6,11 +6,16 @@ import { ValidationPipe } from '@nestjs/common';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
-  // --- CONFIGURATION CORS HYBRIDE ---
+  // 1. AJOUTE CETTE LIGNE OBLIGATOIREMENT
+  // C'est elle qui crée vraiment les routes /v1/...
+  app.setGlobalPrefix('v1'); 
+
+  // --- CONFIGURATION CORS ---
   app.enableCors({
     origin: [
-      'http://localhost:5173',                // 1. Pour le test local (Prof)
-      'https://nestjs-opal-zeta.vercel.app',  // 2. Pour le site en ligne (Vercel)
+      'http://localhost:5173',
+      'http://127.0.0.1:5173', // Ajoute ça pour Playwright par sécurité
+      'https://nestjs-opal-zeta.vercel.app',
     ],
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
     credentials: true,
@@ -27,24 +32,18 @@ async function bootstrap() {
   // ---- Swagger config ----
   const config = new DocumentBuilder()
     .setTitle('Library API')
-    .setDescription('API pour gérer Books, Authors et Categories')
+    .setDescription('API Library')
     .setVersion('v1')
     .addBearerAuth()
     .build();
 
   const document = SwaggerModule.createDocument(app, config);
 
-  // ---- Versionning uniquement pour Swagger (Visuel) ----
-  Object.keys(document.paths).forEach((path) => {
-    const newPath = `/v1${path}`;
-    document.paths[newPath] = document.paths[path];
-    delete document.paths[path];
-  });
+  // 2. SUPPRIME TON BLOC "Versionning uniquement pour Swagger"
+  // (Le app.setGlobalPrefix('v1') plus haut s'occupe de tout, même de Swagger)
 
   SwaggerModule.setup('api', app, document);
 
   await app.listen(process.env.PORT ?? 3000);
-  console.log(`Application is running on: http://localhost:${process.env.PORT ?? 3000}`);
-  console.log(`Swagger docs available at: http://localhost:${process.env.PORT ?? 3000}/api`);
 }
 bootstrap();

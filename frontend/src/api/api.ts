@@ -1,25 +1,64 @@
-// Détection automatique : Vrai si on est en local, Faux si on est sur Vercel
-const isDev = import.meta.env.MODE === 'development';
+// api.ts
 
-export const API_URL = isDev
-  ? "http://localhost:3000"                   // URL Local (Prof)
-  : "https://book-app-4vgb.onrender.com";     // URL Production (Render)
+const API_URL = "http://localhost:3000/v1";
 
-// Token interne géré par le front
-let token: string | null = null;
+// Internal token management
+let token: string | null = localStorage.getItem("auth_token");
 
-export const setToken = (tok: string) => {
-  token = tok;
+// Callback for auth failures (401)
+let onAuthFailure: (() => void) | null = null;
+
+export const setAuthFailureCallback = (cb: () => void) => {
+  onAuthFailure = cb;
 };
 
-// On renvoie toujours un objet avec des string, jamais vide ou undefined
+export const setToken = (tok: string | null) => {
+  token = tok;
+  if (tok) {
+    localStorage.setItem("auth_token", tok);
+  } else {
+    localStorage.removeItem("auth_token");
+  }
+};
+
+export const getToken = () => token;
+
 const authHeaders = (): Record<string, string> => {
   return token ? { Authorization: `Bearer ${token}` } : {};
 };
 
+// Helper for requests
+const request = async (url: string, options: RequestInit = {}) => {
+  const headers = {
+    "Content-Type": "application/json",
+    ...authHeaders(),
+    ...options.headers,
+  };
+
+  const res = await fetch(`${API_URL}${url}`, {
+    cache: "no-store",
+    ...options,
+    headers
+  });
+
+  if (res.status === 401) {
+    if (onAuthFailure) onAuthFailure();
+    throw new Error("Unauthorized");
+  }
+
+  if (!res.ok) {
+    const errorBody = await res.json().catch(() => ({}));
+    throw new Error(errorBody.message || `Error ${res.status}`);
+  }
+
+  return res.json();
+};
+
+// ---------------- API ------------------
 export const api = {
   // ----- Auth -----
   login: async (email: string, password: string) => {
+    // Login is special, doesn't use the generic wrapper to avoid circular auth logic potentially
     const res = await fetch(`${API_URL}/auth/login`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -27,90 +66,58 @@ export const api = {
     });
 
     if (!res.ok) throw new Error("Login failed");
+
     return res.json();
   },
 
   // ----- Books -----
-  getBooks: async () => {
-    const res = await fetch(`${API_URL}/book`, { headers: authHeaders() });
-    return res.json();
-  },
-  createBook: async (data: any) => {
-    const res = await fetch(`${API_URL}/book`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json", ...authHeaders() },
-      body: JSON.stringify(data),
-    });
-    return res.json();
-  },
-  updateBook: async (id: number, data: any) => {
-    const res = await fetch(`${API_URL}/book/${id}`, {
-      method: "PUT",
-      headers: { "Content-Type": "application/json", ...authHeaders() },
-      body: JSON.stringify(data),
-    });
-    return res.json();
-  },
+  getBooks: () => request("/book"),
+
+  createBook: (data: any) => request("/book", {
+    method: "POST",
+    body: JSON.stringify(data),
+  }),
+
+  updateBook: (id: number, data: any) => request(`/book/${id}`, {
+    method: "PUT",
+    body: JSON.stringify(data),
+  }),
+
   deleteBook: async (id: number) => {
-    await fetch(`${API_URL}/book/${id}`, {
-      method: "DELETE",
-      headers: authHeaders(),
-    });
+    await request(`/book/${id}`, { method: "DELETE" });
   },
 
   // ----- Authors -----
-  getAuthors: async () => {
-    const res = await fetch(`${API_URL}/authors`, { headers: authHeaders() });
-    return res.json();
-  },
-  createAuthor: async (data: any) => {
-    const res = await fetch(`${API_URL}/authors`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json", ...authHeaders() },
-      body: JSON.stringify(data),
-    });
-    return res.json();
-  },
-  updateAuthor: async (id: number, data: any) => {
-    const res = await fetch(`${API_URL}/authors/${id}`, {
-      method: "PATCH",
-      headers: { "Content-Type": "application/json", ...authHeaders() },
-      body: JSON.stringify(data),
-    });
-    return res.json();
-  },
+  getAuthors: () => request("/authors"),
+
+  createAuthor: (data: any) => request("/authors", {
+    method: "POST",
+    body: JSON.stringify(data),
+  }),
+
+  updateAuthor: (id: number, data: any) => request(`/authors/${id}`, {
+    method: "PATCH",
+    body: JSON.stringify(data),
+  }),
+
   deleteAuthor: async (id: number) => {
-    await fetch(`${API_URL}/authors/${id}`, {
-      method: "DELETE",
-      headers: authHeaders(),
-    });
+    await request(`/authors/${id}`, { method: "DELETE" });
   },
 
   // ----- Categories -----
-  getCategories: async () => {
-    const res = await fetch(`${API_URL}/categories`, { headers: authHeaders() });
-    return res.json();
-  },
-  createCategory: async (data: any) => {
-    const res = await fetch(`${API_URL}/categories`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json", ...authHeaders() },
-      body: JSON.stringify(data),
-    });
-    return res.json();
-  },
-  updateCategory: async (id: number, data: any) => {
-    const res = await fetch(`${API_URL}/categories/${id}`, {
-      method: "PUT",
-      headers: { "Content-Type": "application/json", ...authHeaders() },
-      body: JSON.stringify(data),
-    });
-    return res.json();
-  },
+  getCategories: () => request("/categories"),
+
+  createCategory: (data: any) => request("/categories", {
+    method: "POST",
+    body: JSON.stringify(data),
+  }),
+
+  updateCategory: (id: number, data: any) => request(`/categories/${id}`, {
+    method: "PUT",
+    body: JSON.stringify(data),
+  }),
+
   deleteCategory: async (id: number) => {
-    await fetch(`${API_URL}/categories/${id}`, {
-      method: "DELETE",
-      headers: authHeaders(),
-    });
+    await request(`/categories/${id}`, { method: "DELETE" });
   },
 };

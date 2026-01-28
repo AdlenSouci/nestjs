@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common';
+import { ConfigModule } from '@nestjs/config'; // <--- AJOUTE ÇA
 import { APP_GUARD } from '@nestjs/core';
 import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler';
 import { AppController } from './app.controller';
@@ -11,10 +12,15 @@ import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
-    ThrottlerModule.forRoot([{
-      ttl: 60000,
-      limit: 10,
-    }]),
+    // 1. On charge les variables d'environnement en Global
+    ConfigModule.forRoot({
+      isGlobal: true,
+    }),
+
+    // ThrottlerModule.forRoot([{
+    //   ttl: 60000,
+    //   limit: 100,
+    // }]),
     PrismaModule,
     AuthorsModule,
     BookModule,
@@ -24,10 +30,10 @@ import { AuthModule } from './auth/auth.module';
   controllers: [AppController],
   providers: [
     AppService,
-    {
-      provide: APP_GUARD,
-      useClass: ThrottlerGuard,
-    },
+    // {
+    //   provide: APP_GUARD,
+    //   useClass: ThrottlerGuard,
+    // },
   ],
 })
-export class AppModule {}
+export class AppModule { }

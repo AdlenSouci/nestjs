@@ -10,8 +10,8 @@ export class CreateAuthorDto {
 
   @ApiProperty({ description: 'Biographie', required: false })
   @IsString()
-  @IsNotEmpty() // Ou IsOptional() si la bio n'est pas obligatoire dans la DB
-  biography: string;
+  @IsOptional()
+  biography?: string;
 
   @ApiProperty({ description: 'Date de naissance', required: false })
   @IsOptional()
