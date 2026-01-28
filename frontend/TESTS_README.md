@@ -55,16 +55,17 @@ Coverage:    99.21%
 
 7 passed (8.3s)
 6. Preuves Visuelles des Tests
-![Texte alternatif](img_test/crud_1_categorie_creee.png)
-![Texte alternatif](img_test/crud_2_categorie_supprimee.png)
-![Texte alternatif](img_test/image.png)
-![Texte alternatif](img_test/crud_3_auteur_cree.png)
-![Texte alternatif](img_test/crud_4_auteur_supprime.jpg)
-![Texte alternatif](img_test/crud_5_livre_cree.png)
-![Texte alternatif](img_test/crud_6_livre_supprime.png)
-![Texte alternatif](img_test/login_bad_password.png)
-![Texte alternatif](img_test/login_success.png)
-![Texte alternatif](img_test/login_unknown_user.png)
+![Création Catégorie](img_test/crud_1_categorie_creee.png)
+![Suppression Catégorie](img_test/crud_2_categorie_supprimee.png)
+![Image Générale](img_test/image.png)
+![Création Auteur](img_test/crud_3_auteur_cree.png)
+![Suppression Auteur](img_test/crud_4_auteur_supprime.jpg)
+![Création Livre](img_test/crud_5_livre_cree.png)
+![Suppression Livre](img_test/crud_6_livre_supprime.png)
+![Erreur Login](img_test/login_bad_password.png)
+![Connexion Réussie](img_test/login_success.png)
+![Utilisateur Inconnu](img_test/login_unknown_user.png)
+![Test](./img_test/crud_1_categorie_creee.png)
 
 
 
