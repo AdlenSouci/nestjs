@@ -12,67 +12,53 @@ test.describe('Suite CRUD Admin', () => {
   });
 
   test('1. CRUD Catégorie - Créer puis Supprimer', async ({ page }) => {
-    page.on('console', msg => console.log('PAGE LOG:', msg.text()));
     page.on('dialog', async dialog => {
-      console.log("DIALOG:", dialog.message());
       await dialog.accept();
     });
 
     const catName = 'catego_test';
 
-    // --- CREATION CATEGORIE ---
     await page.getByRole('button', { name: 'Catégories' }).click();
     const catInput = page.getByPlaceholder('Nom de la catégorie');
     await catInput.fill(catName);
     await page.getByRole('button', { name: 'Ajouter' }).click();
 
-    // Vérification création
     await expect(catInput).toHaveValue('', { timeout: 20000 });
     await expect(page.getByText(catName).first()).toBeVisible({ timeout: 20000 });
     await page.screenshot({ path: 'img_test/crud_1_categorie_creee.png' });
 
-    // --- SUPPRESSION CATEGORIE ---
     const catItem = page.getByRole('listitem').filter({ hasText: catName }).first();
     await catItem.getByRole('button', { name: 'Supprimer' }).click();
 
-    // Vérification suppression
     await expect(page.getByText(catName)).not.toBeVisible({ timeout: 10000 });
     await page.screenshot({ path: 'img_test/crud_2_categorie_supprimee.png' });
   });
 
   test('2. CRUD Auteur - Créer puis Supprimer', async ({ page }) => {
-    page.on('console', msg => console.log('PAGE LOG:', msg.text()));
     page.on('dialog', async dialog => {
-      console.log("DIALOG:", dialog.message());
       await dialog.accept();
     });
 
     const authName = 'auteur_de_test';
 
-    // --- CREATION AUTEUR ---
     await page.getByRole('button', { name: 'Auteurs' }).click();
     const authInput = page.getByPlaceholder('Nom de l\'auteur');
     await authInput.fill(authName);
     await page.getByRole('button', { name: 'Ajouter Auteur' }).click();
 
-    // Vérification création
     await expect(authInput).toHaveValue('', { timeout: 20000 });
     await expect(page.getByText(authName).first()).toBeVisible({ timeout: 20000 });
     await page.screenshot({ path: 'img_test/crud_3_auteur_cree.png' });
 
-    // --- SUPPRESSION AUTEUR ---
-    const authItem = page.getByRole('listitem').filter({ hasText: authName }).first();
-    await authItem.getByRole('button', { name: 'Supprimer' }).click();
+    const catItem = page.getByRole('listitem').filter({ hasText: authName }).first();
+    await catItem.getByRole('button', { name: 'Supprimer' }).click();
 
-    // Vérification suppression
     await expect(page.getByText(authName)).not.toBeVisible({ timeout: 10000 });
     await page.screenshot({ path: 'img_test/crud_4_auteur_supprime.png' });
   });
 
   test('3. CRUD Livre - Créer puis Supprimer', async ({ page }) => {
-    page.on('console', msg => console.log('PAGE LOG:', msg.text()));
     page.on('dialog', async dialog => {
-      console.log("DIALOG:", dialog.message());
       await dialog.accept();
     });
 
@@ -80,7 +66,6 @@ test.describe('Suite CRUD Admin', () => {
     const authName = 'auteur_de_test';
     const bookTitle = 'livre_de_la_jungle';
 
-    // --- PREPARATION: Créer Catégorie et Auteur ---
     await page.getByRole('button', { name: 'Catégories' }).click();
     const catInput = page.getByPlaceholder('Nom de la catégorie');
     await catInput.fill(catName);
@@ -93,13 +78,11 @@ test.describe('Suite CRUD Admin', () => {
     await page.getByRole('button', { name: 'Ajouter Auteur' }).click();
     await expect(page.getByText(authName)).toBeVisible({ timeout: 20000 });
 
-    // --- CREATION LIVRE ---
     await page.getByRole('button', { name: 'Livres' }).click();
     const bookInput = page.getByPlaceholder('Titre du livre');
     await expect(bookInput).toBeVisible();
     await bookInput.fill(bookTitle);
 
-    // Sélection des dépendances
     const selectAuthor = page.locator('select').first();
     const selectCat = page.locator('select').nth(1);
 
@@ -109,7 +92,6 @@ test.describe('Suite CRUD Admin', () => {
     await selectAuthor.selectOption({ label: authName });
     await selectCat.selectOption({ label: catName });
 
-    // Attendre la réponse du backend
     const createResponse = page.waitForResponse(resp =>
       resp.url().includes('/book') &&
       resp.request().method() === 'POST' &&
@@ -118,13 +100,11 @@ test.describe('Suite CRUD Admin', () => {
     await page.getByRole('button', { name: 'Ajouter Livre' }).click();
     await createResponse;
 
-    // Vérification création
     const bookItem = page.getByRole('listitem').filter({ hasText: bookTitle });
     await expect(bookItem).toBeVisible({ timeout: 15000 });
     await page.screenshot({ path: 'img_test/crud_5_livre_cree.png' });
     await expect(bookInput).toHaveValue('', { timeout: 5000 });
 
-    // --- SUPPRESSION LIVRE ---
     const deleteResponse = page.waitForResponse(resp =>
       resp.url().includes('/book/') &&
       resp.request().method() === 'DELETE' &&
@@ -133,11 +113,9 @@ test.describe('Suite CRUD Admin', () => {
     await bookItem.getByRole('button', { name: 'Supprimer' }).click();
     await deleteResponse;
 
-    // Vérification suppression
     await expect(bookItem).not.toBeVisible({ timeout: 15000 });
     await page.screenshot({ path: 'img_test/crud_6_livre_supprime.png' });
 
-    // --- NETTOYAGE: Supprimer Auteur et Catégorie ---
     await page.getByRole('button', { name: 'Auteurs' }).click();
     await page.getByRole('listitem').filter({ hasText: authName }).first()
       .getByRole('button', { name: 'Supprimer' }).click();
