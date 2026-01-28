@@ -119,11 +119,11 @@ test.describe('Suite CRUD Admin', () => {
     await page.screenshot({ path: 'img_test/crud_6_livre_supprime.png' });
 
     await page.getByRole('button', { name: 'Auteurs' }).click();
-    await page.getByRole('listitem').filter({ hasText: authName }).first()
-      .getByRole('button', { name: 'Supprimer' }).click();
+    const authItem = page.getByRole('listitem').filter({ hasText: authName }).first();
+    await authItem.getByRole('button', { name: 'Supprimer' }).click();
 
     await page.getByRole('button', { name: 'Catégories' }).click();
-    await page.getByRole('listitem').filter({ hasText: catName }).first()
-      .getByRole('button', { name: 'Supprimer' }).click();
+    const catItem = page.getByRole('listitem').filter({ hasText: catName }).first();
+    await catItem.getByRole('button', { name: 'Supprimer' }).click();
   });
 });

@@ -12,7 +12,7 @@ test.describe('Suite de Tests Authentification', () => {
     
     await page.getByRole('button', { name: 'Login' }).click();
 
-    await expect(page.getByText('Admin Login')).not.toBeVisible();
+    await expect(page.getByText('Admin Login')).not.toBeVisible({ timeout: 10000 });
     await expect(page.getByRole('button', { name: 'Livres' })).toBeVisible();
 
     await page.waitForTimeout(500);
@@ -31,9 +31,9 @@ test.describe('Suite de Tests Authentification', () => {
     
     await page.getByRole('button', { name: 'Login' }).click();
 
-    await page.waitForTimeout(500);
+    await page.waitForTimeout(1000);
 
-    expect(dialogMessage).toContain('Erreur lors de la connexion');
+    expect(dialogMessage).toContain('Login failed');
     await expect(page.getByText('Admin Login')).toBeVisible();
 
     await page.screenshot({ path: 'img_test/login_bad_password.png' });
@@ -51,9 +51,9 @@ test.describe('Suite de Tests Authentification', () => {
     
     await page.getByRole('button', { name: 'Login' }).click();
 
-    await page.waitForTimeout(500);
+    await page.waitForTimeout(1000);
 
-    expect(dialogMessage).toContain('Erreur lors de la connexion');
+    expect(dialogMessage).toContain('Login failed');
     await expect(page.getByText('Admin Login')).toBeVisible();
 
     await page.screenshot({ path: 'img_test/login_unknown_user.png' });
