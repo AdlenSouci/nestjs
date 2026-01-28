@@ -6,36 +6,46 @@ on:
   pull_request:
     branches: [main]
 
+env:
+  DATABASE_URL: "postgresql://postgres:postgres@localhost:5432/test"
+  JWT_SECRET: "super_secret_pour_les_tests"
+
 jobs:
-  backend-tests:
+  backend-unit-tests:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
           node-version: '20'
-      - name: Install & Generate
+
+      - name: Setup Backend
         working-directory: ./backend
         run: |
           npm install
           npx prisma generate
-      - name: Run Tests
+
+      - name: Run Backend Tests
         working-directory: ./backend
         run: npm run test
 
-  frontend-tests:
-    needs: backend-tests
+  frontend-e2e-tests:
+    needs: backend-unit-tests
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
           node-version: '20'
-      - name: Install & Start
+
+      - name: Setup Full Stack
         run: |
-          cd backend && npm install && npx prisma generate && npm run start:dev &
-          cd frontend && npm install && npx playwright install --with-deps && npm run dev &
-          sleep 20
-      - name: Run Playwright
-        working-directory: ./frontend
-        run: npx playwright test
+          cd backend && npm install && npx prisma generate && npm run build
+          cd ../frontend && npm install && npx playwright install --with-deps
+
+      - name: Run E2E Tests
+        run: |
+          cd backend && npm run start:dev &
+          cd frontend && npm run dev &
+          sleep 30
+          cd frontend && npx playwright test
