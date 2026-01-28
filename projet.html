@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Présentation TP - Testing Frontend</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .slide { display: none; height: 100vh; padding: 40px; }
+        .slide.active { display: flex; flex-direction: column; }
+        .code-block { background: #1e1e1e; color: #d4d4d4; padding: 15px; border-radius: 8px; font-family: monospace; font-size: 0.85rem; overflow-x: auto; }
+        .success { color: #4ade80; }
+        .img-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; }
+        .img-item { background: #1e293b; padding: 10px; border-radius: 8px; text-align: center; }
+        .img-item img { max-height: 150px; margin: 0 auto; border-radius: 4px; }
+    </style>
+</head>
+<body class="bg-slate-900 text-white">
+
+    <div id="slide1" class="slide active justify-center items-center text-center">
+        <h1 class="text-6xl font-bold text-blue-400 mb-6">Sujet 5 : Frontend Testing</h1>
+        <h2 class="text-3xl text-slate-300 mb-8">Stratégies pour des apps robustes et maintenables</h2>
+        <div class="bg-slate-800 p-6 rounded-lg border border-slate-700 max-w-2xl">
+            <p class="text-xl mb-4">Application : Gestion de Bibliothèque (CRUD)</p>
+            <p class="text-slate-400">Système complet de gestion de livres, auteurs et catégories avec authentification sécurisée.</p>
+        </div>
+        <p class="mt-12 text-slate-500">Appuyez sur les flèches pour naviguer</p>
+    </div>
+
+    <div id="slide2" class="slide">
+        <h2 class="text-4xl font-bold border-b-2 border-blue-500 pb-2 mb-8">But du TP & Stratégie</h2>
+        <div class="grid grid-cols-2 gap-10">
+            <div class="space-y-6">
+                <div class="bg-slate-800 p-4 rounded shadow">
+                    <h3 class="text-xl font-bold text-blue-300">Pourquoi tester ?</h3>
+                    <p class="text-slate-400">Garantir que les nouvelles fonctionnalités ne cassent pas l'existant (non-régression) et automatiser la validation métier.</p>
+                </div>
+                <div class="bg-slate-800 p-4 rounded shadow">
+                    <h3 class="text-xl font-bold text-blue-300">Pyramide des tests</h3>
+                    <p class="text-slate-400">Tests unitaires pour la logique (Jest) et tests de bout en bout pour le parcours utilisateur (Playwright).</p>
+                </div>
+            </div>
+            <div class="space-y-6">
+                <div class="bg-slate-800 p-4 rounded shadow">
+                    <h3 class="text-xl font-bold text-blue-300">Maintenabilité</h3>
+                    <p class="text-slate-400">Une base de code testée permet des refactorisations sereines et un déploiement continu fiable.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="slide3" class="slide">
+        <h2 class="text-4xl font-bold border-b-2 border-orange-500 pb-2 mb-8">Pipeline CI/CD (GitHub Actions)</h2>
+        <div class="grid grid-cols-2 gap-8">
+            <div class="bg-slate-800 p-6 rounded">
+                <h3 class="text-xl font-bold mb-4 text-orange-300">Automatisation Totale</h3>
+                <ul class="list-disc ml-5 space-y-4 text-slate-300">
+                    <li><strong>Infrastructure :</strong> Déploiement d'un conteneur PostgreSQL 15.</li>
+                    <li><strong>Prisma :</strong> Génération du client et synchronisation de la base (db push).</li>
+                    <li><strong>Backend :</strong> Installation et exécution des 38 tests unitaires Jest.</li>
+                    <li><strong>Frontend :</strong> Build et tests E2E avec Playwright (Chromium).</li>
+                </ul>
+            </div>
+            <div class="bg-slate-900 p-6 rounded border border-slate-700">
+                <p class="font-mono text-sm text-blue-400"># Workflow GitHub</p>
+                <p class="font-mono text-xs mt-2">
+                    on: [push]<br>
+                    jobs:<br>
+                    &nbsp;&nbsp;everything:<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;services: postgres<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;steps:<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- run: npx prisma db push<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- run: npm run test<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- run: npx playwright test
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <div id="slide4" class="slide">
+        <h2 class="text-4xl font-bold border-b-2 border-green-500 pb-2 mb-6">Résultats Backend (Jest)</h2>
+        <div class="code-block mb-4">
+            <p class="success">PASS  src/category/category.service.spec.ts</p>
+            <p class="success">PASS  src/app.controller.spec.ts</p>
+            <p class="success">PASS  src/book/book.service.spec.ts</p>
+            <p class="success">PASS  src/authors/authors.service.spec.ts</p>
+            <p class="success">PASS  src/category/category.controller.spec.ts</p>
+            <p class="success">PASS  src/book/book.controller.spec.ts</p>
+            <p class="success">PASS  src/authors/authors.controller.spec.ts</p>
+            <br>
+            <p class="font-bold">Test Suites: 7 passed, 7 total</p>
+            <p class="font-bold">Tests:       38 passed, 38 total</p>
+        </div>
+        <div class="bg-slate-800 p-4 rounded">
+            <h3 class="font-bold text-green-400 mb-2">Couverture de code (Coverage) :</h3>
+            <div class="grid grid-cols-4 gap-4 text-center">
+                <div class="p-2 border border-slate-700 rounded">Statements: <span class="text-green-400 font-bold">99.21%</span></div>
+                <div class="p-2 border border-slate-700 rounded">Branches: <span class="text-blue-400 font-bold">76.78%</span></div>
+                <div class="p-2 border border-slate-700 rounded">Functions: <span class="text-green-400 font-bold">97.5%</span></div>
+                <div class="p-2 border border-slate-700 rounded">Lines: <span class="text-green-400 font-bold">99.09%</span></div>
+            </div>
+        </div>
+    </div>
+
+    <div id="slide5" class="slide">
+        <h2 class="text-4xl font-bold border-b-2 border-purple-500 pb-2 mb-6">Résultats Frontend (Playwright)</h2>
+        <div class="code-block">
+            <p class="success">✓  1 …D Admin › 2. CRUD Auteur - Créer puis Supprimer (2.4s)</p>
+            <p class="success">✓  2 ….spec.ts:3:1 › Le titre de la page est correct (972ms)</p>
+            <p class="success">✓  3 …dmin › 1. CRUD Catégorie - Créer puis Supprimer (2.9s)</p>
+            <p class="success">✓  4 …UD Admin › 3. CRUD Livre - Créer puis Supprimer (4.8s)</p>
+            <p class="success">✓  5 …fication › Cas 2 : Echec - Mauvais Mot de Passe (1.6s)</p>
+            <p class="success">✓  6 …ification › Cas 3 : Echec - Utilisateur Inconnu (1.5s)</p>
+            <p class="success">✓  7 …ts Authentification › Cas 1 : Connexion Reussie (2.0s)</p>
+            <br>
+            <p class="font-bold text-green-400">7 passed (8.3s)</p>
+        </div>
+    </div>
+
+    <div id="slide6" class="slide">
+        <h2 class="text-4xl font-bold border-b-2 border-pink-500 pb-2 mb-6">Preuves Visuelles</h2>
+        <div class="img-grid">
+            <div class="img-item">
+                <img src="login_success.png" alt="Connexion Réussie">
+                <p class="text-xs mt-2">Authentification OK</p>
+            </div>
+            <div class="img-item">
+                <img src="crud_1_categorie_creee.png" alt="Catégorie Créée">
+                <p class="text-xs mt-2">Création Catégorie</p>
+            </div>
+            <div class="img-item">
+                <img src="crud_5_livre_cree.png" alt="Livre Créé">
+                <p class="text-xs mt-2">Livre & Relations</p>
+            </div>
+            <div class="img-item">
+                <img src="login_bad_password.png" alt="Erreur Login">
+                <p class="text-xs mt-2">Validation Dialog</p>
+            </div>
+            <div class="img-item">
+                <img src="crud_2_categorie_supprimee.png" alt="Suppression">
+                <p class="text-xs mt-2">Nettoyage Catégorie</p>
+            </div>
+            <div class="img-item">
+                <img src="crud_4_auteur_supprime.png" alt="Auteur Supprimé">
+                <p class="text-xs mt-2">Nettoyage Auteur</p>
+            </div>
+        </div>
+    </div>
+
+    <div id="slide7" class="slide">
+        <h2 class="text-4xl font-bold border-b-2 border-red-500 pb-2 mb-8">Défis & Solutions</h2>
+        <div class="space-y-4">
+            <div class="bg-slate-800 p-4 rounded border-l-4 border-red-500">
+                <h3 class="font-bold text-red-400">Conflit de Port (EADDRINUSE)</h3>
+                <p class="text-sm">Le serveur ne s'arrêtait pas proprement entre les tests. Solution : Nettoyage forcé des ports 3000 via scripts avant lancement.</p>
+            </div>
+            <div class="bg-slate-800 p-4 rounded border-l-4 border-red-500">
+                <h3 class="font-bold text-red-400">Synchronisation des Dialogues</h3>
+                <p class="text-sm">Playwright passait trop vite sur les alertes JS. Solution : Utilisation de <code>waitForEvent('dialog')</code>.</p>
+            </div>
+            <div class="bg-slate-800 p-4 rounded border-l-4 border-red-500">
+                <h3 class="font-bold text-red-400">Doublons de Données</h3>
+                <p class="text-sm">Les tests échouaient si relancés. Solution : Génération de noms uniques avec <code>Date.now()</code>.</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentSlide = 1;
+        const totalSlides = 7;
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' && currentSlide < totalSlides) {
+                document.getElementById(`slide${currentSlide}`).classList.remove('active');
+                currentSlide++;
+                document.getElementById(`slide${currentSlide}`).classList.add('active');
+            }
+            if (e.key === 'ArrowLeft' && currentSlide > 1) {
+                document.getElementById(`slide${currentSlide}`).classList.remove('active');
+                currentSlide--;
+                document.getElementById(`slide${currentSlide}`).classList.add('active');
+            }
+        });
+    </script>
+</body>
+</html>
