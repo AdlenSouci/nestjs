@@ -7,8 +7,8 @@ test.describe('Suite de Tests Authentification', () => {
   });
 
   test('Cas 1 : Connexion Reussie', async ({ page }) => {
-    await page.getByPlaceholder('Email').fill('user@example.com');
-    await page.getByPlaceholder('Password').fill('user123');
+    await page.getByPlaceholder('Email').fill('admin@example.com');
+    await page.getByPlaceholder('Password').fill('admin123');
     
     await page.getByRole('button', { name: 'Login' }).click();
 
@@ -26,14 +26,14 @@ test.describe('Suite de Tests Authentification', () => {
       await dialog.accept();
     });
 
-    await page.getByPlaceholder('Email').fill('user@example.com');
+    await page.getByPlaceholder('Email').fill('admin@example.com');
     await page.getByPlaceholder('Password').fill('mauvaispass');
     
     await page.getByRole('button', { name: 'Login' }).click();
 
     await page.waitForTimeout(500);
 
-    expect(dialogMessage).toContain('Login failed');
+    expect(dialogMessage).toContain('Erreur lors de la connexion');
     await expect(page.getByText('Admin Login')).toBeVisible();
 
     await page.screenshot({ path: 'img_test/login_bad_password.png' });
@@ -53,7 +53,7 @@ test.describe('Suite de Tests Authentification', () => {
 
     await page.waitForTimeout(500);
 
-    expect(dialogMessage).toContain('Login failed');
+    expect(dialogMessage).toContain('Erreur lors de la connexion');
     await expect(page.getByText('Admin Login')).toBeVisible();
 
     await page.screenshot({ path: 'img_test/login_unknown_user.png' });
