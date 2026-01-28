@@ -6,10 +6,11 @@ export class AuthorsService {
   constructor(private prisma: PrismaService) {}
 
   async create(data: any) {
+    const { biography, ...rest } = data;
     return this.prisma.author.create({
       data: {
-        ...data,
-        biography: data.biography ?? '',
+        ...rest,
+        biography: biography ?? '',
       },
     });
   }
@@ -25,11 +26,12 @@ export class AuthorsService {
   }
 
   async update(id: number, data: any) {
+    const { biography, ...rest } = data;
     return this.prisma.author.update({
       where: { id },
       data: {
-        ...data,
-        biography: data.biography ?? undefined,
+        ...rest,
+        ...(biography !== undefined ? { biography } : {}),
       },
     });
   }
