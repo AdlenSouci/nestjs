@@ -7,11 +7,7 @@ export class AuthorsService {
 
   async create(data: any) {
     return this.prisma.author.create({
-      data: {
-        name: data.name,
-        biography: data.biography ?? '',
-        birthDate: data.birthDate,
-      },
+      data: data as any,
     });
   }
 
@@ -28,10 +24,7 @@ export class AuthorsService {
   async update(id: number, data: any) {
     return this.prisma.author.update({
       where: { id },
-      data: {
-        ...data,
-        biography: data.biography ?? undefined,
-      },
+      data: data as any,
     });
   }
 
