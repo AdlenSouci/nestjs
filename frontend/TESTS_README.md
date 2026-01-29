@@ -3,30 +3,33 @@
 ---
 
 ## 1. Présentation de l'Application
+
 L'application **Library CRUD** est un système de gestion de bibliothèque permettant d'administrer des livres, des auteurs et des catégories.  
 Elle repose sur une architecture moderne avec un backend **NestJS** (Prisma, PostgreSQL) et un frontend **React (Vite)**.
 
 ---
 
 ## 2. Objectifs du TP
+
 Le but de ce TP est de mettre en place une stratégie de test multiniveau :
 
-- Tests unitaires backend (Jest)
-- Tests End-to-End frontend (Playwright)
-- Automatisation CI/CD avec GitHub Actions
-- Maintenabilité et non-régression
+- Tests unitaires backend (Jest)  
+- Tests End-to-End frontend (Playwright)  
+- Automatisation CI/CD avec GitHub Actions  
+- Maintenabilité et non-régression  
 
 ---
 
 ## 3. Pipeline CI/CD sur GitHub Actions
+
 À chaque mise à jour du code (push), la pipeline exécute :
 
-1. Déploiement d’un service PostgreSQL 15 via Docker
-2. Installation des dépendances backend
-3. Génération du client Prisma et synchronisation de la base (`db push`)
-4. Exécution des tests unitaires backend
-5. Build du frontend
-6. Exécution des tests End-to-End Playwright
+1. Déploiement d’un service PostgreSQL 15 via Docker  
+2. Installation des dépendances backend  
+3. Génération du client Prisma et synchronisation de la base (`db push`)  
+4. Exécution des tests unitaires backend  
+5. Build du frontend  
+6. Exécution des tests End-to-End Playwright  
 
 ---
 
@@ -44,49 +47,70 @@ PASS  src/authors/authors.controller.spec.ts
 Test Suites: 7 passed, 7 total
 Tests:       38 passed, 38 total
 Coverage:    99.21%
-5. Résultats des Tests Frontend (Playwright)
-✓ CRUD Auteur – Créer puis Supprimer
-✓ Titre de la page correct
-✓ CRUD Catégorie – Créer puis Supprimer
-✓ CRUD Livre – Créer puis Supprimer
-✓ Auth – Mauvais mot de passe
-✓ Auth – Utilisateur inconnu
-✓ Auth – Connexion réussie
+```
 
-7 passed (8.3s)
-6. Preuves Visuelles des Tests
-![Création Catégorie](img_test/crud_1_categorie_creee.png)
-![Suppression Catégorie](img_test/crud_2_categorie_supprimee.png)
-![Image Générale](img_test/image.png)
-![Création Auteur](img_test/crud_3_auteur_cree.png)
-![Suppression Auteur](img_test/crud_4_auteur_supprime.jpg)
-![Création Livre](img_test/crud_5_livre_cree.png)
-![Suppression Livre](img_test/crud_6_livre_supprime.png)
-![Erreur Login](img_test/login_bad_password.png)
-![Connexion Réussie](img_test/login_success.png)
-![Utilisateur Inconnu](img_test/login_unknown_user.png)
-![Test](./img_test/crud_1_categorie_creee.png)
+---
 
+## 5. Résultats des Tests Frontend (Playwright)
 
+- **CRUD Auteur** – Créer puis Supprimer ✅  
+- **Titre de la page correct** ✅  
+- **CRUD Catégorie** – Créer puis Supprimer ✅  
+- **CRUD Livre** – Créer puis Supprimer ✅  
+- **Auth – Mauvais mot de passe** ✅  
+- **Auth – Utilisateur inconnu** ✅  
+- **Auth – Connexion réussie** ✅  
 
-7. Erreurs Rencontrées et Solutions
-Port déjà utilisé (EADDRINUSE)
-Instance serveur résiduelle entre les tests.
-Solution : nettoyage forcé des processus avant le lancement.
+**7 tests passés (8.3s)**
 
-Synchronisation des dialogues Playwright
-Les alertes JavaScript étaient capturées trop tard.
-Solution : page.waitForEvent('dialog').
+---
 
-Conflits de données lors des tests CRUD
-Identifiants statiques provoquant des doublons.
-Solution : génération de valeurs uniques avec Date.now().
+## 6. Preuves Visuelles des Tests
 
-8. Conclusion
+### CRUD Catégorie
+
+![Catégorie créée](img_test/crud_1_categorie_creee.png)  
+![Catégorie supprimée](img_test/crud_2_categorie_supprimee.png)  
+
+### CRUD Auteur
+
+![Auteur créé](img_test/crud_3_auteur_cree.png)  
+![Auteur supprimé](img_test/crud_4_auteur_supprime.png)  
+
+### CRUD Livre
+
+![Livre créé](img_test/crud_5_livre_cree.png)  
+![Livre supprimé](img_test/crud_6_livre_supprime.png)  
+
+### Authentification
+
+![Login mauvais mot de passe](img_test/login_bad_password.png)  
+![Login réussi](img_test/login_success.png)  
+![Login utilisateur inconnu](img_test/login_unknown_user.png)  
+
+---
+
+## 7. Erreurs Rencontrées et Solutions
+
+- **Port déjà utilisé (EADDRINUSE)**  
+  Instance serveur résiduelle entre les tests.  
+  **Solution :** nettoyage forcé des processus avant le lancement.
+
+- **Synchronisation des dialogues Playwright**  
+  Les alertes JavaScript étaient capturées trop tard.  
+  **Solution :** `page.waitForEvent('dialog')`.
+
+- **Conflits de données lors des tests CRUD**  
+  Identifiants statiques provoquant des doublons.  
+  **Solution :** génération de valeurs uniques avec `Date.now()`.
+
+---
+
+## 8. Conclusion
+
 Cette stratégie de tests garantit :
 
-une application robuste et fiable
+- Une application robuste et fiable  
+- Une détection précoce des régressions  
+- Une base de code maintenable et évolutive
 
-une détection précoce des régressions
-
-une base de code maintenable et évolutive
